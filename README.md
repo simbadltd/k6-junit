@@ -6,11 +6,47 @@ k6 JUnit summary exporter libray.
 
 ## Usage
 ``` javascript
+import {jUnit} from "k6-junit";
+...
 export function handleSummary(data) {
     console.log('Preparing the end-of-test summary...');
     return {
         "./test-results.xml": jUnit(data)
     }
+}
+```
+
+### Typescript integration
+Based on this template: [k6-template-typescript](https://github.com/grafana/k6-template-typescript).
+
+`package.json`:
+```json
+{
+  ...
+  "devDependencies": {
+    ...
+    "k6-junit": "X.X.X"
+    ...
+  }
+  ...
+}
+
+```
+
+`webpack.config.js`:
+```javascript
+...
+module.exports = {
+  ...
+    externals: [
+        function ({context, request}, c) {
+            if (request.startsWith('k6') || request.startsWith('https://')) {
+                return request === 'k6-junit' ? c() : c(null, 'commonjs ' + request)
+            }
+            return c();
+        },
+    ],
+  ...
 }
 ```
 
