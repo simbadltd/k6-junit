@@ -22,13 +22,9 @@ Based on this template: [k6-template-typescript](https://github.com/grafana/k6-t
 `package.json`:
 ```json
 {
-  ...
   "devDependencies": {
-    ...
     "k6-junit": "X.X.X"
-    ...
   }
-  ...
 }
 
 ```
