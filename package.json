@@ -15,7 +15,8 @@
     "k6",
     "jUnit",
     "summary",
-    "exporter"
+    "exporter",
+    "report"
   ],
   "author": "Konstantin Kryzhanovskii",
   "license": "MIT"
