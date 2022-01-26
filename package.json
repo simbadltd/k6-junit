@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "k6 JUnit summary exporter libray",
   "main": "index.js",
-  "scripts": {
-    "standard": "standard"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/simbadltd/k6-junit.git"
@@ -21,8 +18,5 @@
     "exporter"
   ],
   "author": "Konstantin Kryzhanovskii",
-  "license": "MIT",
-  "devDependencies": {
-    "standard": "*"
-  }
+  "license": "MIT"
 }
