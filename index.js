@@ -56,7 +56,7 @@ class TestSuite {
 
         for (let index = 0; index < checks.length; ++index) {
             const check = checks[index];
-            const c = new TestCase(check);
+            const c = new TestCase(this.name, check);
             this.cases.push(c);
 
             if (!c.passed) {
