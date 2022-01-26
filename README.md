@@ -73,7 +73,8 @@ export function handleSummary(data) {
 ```
 
 ```xml
-<?xml version="1.0"?><testsuites tests="5" failures="3">
+<?xml version="1.0"?>
+<testsuites tests="5" failures="3">
   <testsuite id="0" name="Root" tests="1" failures="1">
     <testcase name="200 OK" classname="Root" >
       <failure message="5 / 70 (6.67%) checks passed" />
