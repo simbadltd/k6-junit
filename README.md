@@ -19,7 +19,7 @@ export function handleSummary(data) {
 ### Typescript integration
 Based on this template: [k6-template-typescript](https://github.com/grafana/k6-template-typescript).
 
-`package.json`:
+Add dev-dependency to `package.json`:
 ```json
 {
   "devDependencies": {
@@ -29,7 +29,7 @@ Based on this template: [k6-template-typescript](https://github.com/grafana/k6-t
 
 ```
 
-`webpack.config.js`:
+Resolve `k6-junit` package as internal dependecy in `webpack.config.js`:
 ```javascript
 ...
 module.exports = {
