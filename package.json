@@ -1,8 +1,9 @@
 {
   "name": "k6-junit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "k6 JUnit summary exporter libray",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/simbadltd/k6-junit.git"
