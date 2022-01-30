@@ -37,7 +37,7 @@ module.exports = {
     externals: [
         function ({context, request}, c) {
             if (request.startsWith('k6') || request.startsWith('https://')) {
-                return request === 'k6-junit' ? c() : c(null, 'commonjs ' + request)
+                return request === 'k6-junit' ? c() : c(null, 'commonjs ' + request);
             }
             return c();
         },
