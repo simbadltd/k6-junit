@@ -46,7 +46,7 @@ class TestCase {
         this.name = sanitizeName(get(check, ["name"]));
         const passed = get(check, ["passes"]);
         const failed = get(check, ["fails"])
-        this.passed = passed > 0 && failed === 0;
+        this.passed = passed > 0 && failed <= passed;
 
         if (!this.passed) {
             const passPercent = passed / (passed + failed) * 100;
