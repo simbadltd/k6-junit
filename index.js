@@ -58,7 +58,7 @@ class TestCase {
         return this.passed ?
             `${ident(tab)}<testcase name="${this.name}" classname="${this.className}" />` :
             `${ident(tab)}<testcase name="${this.name}" classname="${this.className}" >\n` +
-            `${ident(tab + 1)}<failure message="${this.failMessage}" />\n` +
+            `${ident(tab + 1)}<failure message="${this.failMessage}">${this.failMessage}</failure>\n` +
             `${ident(tab)}</testcase>`;
     }
 }
