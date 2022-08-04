@@ -1,7 +1,7 @@
 {
   "name": "k6-junit",
-  "version": "0.0.4",
-  "description": "k6 JUnit summary exporter libray",
+  "version": "0.0.5",
+  "description": "k6 JUnit summary exporter library",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {

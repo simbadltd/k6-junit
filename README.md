@@ -1,7 +1,7 @@
 # k6-junit
 [![NPM](https://img.shields.io/npm/v/k6-junit.svg)](https://www.npmjs.org/package/k6-junit)
 
-k6 JUnit summary exporter libray.
+k6 JUnit summary exporter library.
 
 
 ## Usage
@@ -44,6 +44,17 @@ module.exports = {
     ],
   ...
 }
+```
+
+### Excluding Thresholds export
+Call `jUnit` function with `includeThresholds` argument set to `false`. It will prevent Thresholds statistics to be exported.
+``` javascript
+import {jUnit} from "k6-junit";
+...
+    return {
+        "./test-results.xml": jUnit(data, false)
+    }
+...
 ```
 
 ## Example k6 JSON Summary
