@@ -101,7 +101,7 @@ class TestSuite {
 }
 
 class Report {
-    constructor(data) {
+    constructor(data, includeThresholds) {
         this.nextSuiteId = 0;
         this.suites = [];
 
@@ -117,7 +117,9 @@ class Report {
             }
         }
 
-        this.parseMetrics(data);
+        if (includeThresholds) {
+            this.parseMetrics(data);
+        }
     }
 
     parseMetrics(data) {
@@ -195,8 +197,8 @@ class Report {
     }
 }
 
-function jUnit(data) {
-    return new Report(data).toXml();
+function jUnit(data, includeThresholds = true) {
+    return new Report(data, includeThresholds).toXml();
 }
 
 exports.jUnit = jUnit;
