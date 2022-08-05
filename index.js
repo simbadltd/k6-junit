@@ -2,6 +2,11 @@
 const THRESHOLDS_TEST_SUITE_NAME = "Thresholds";
 const THRESHOLD_FAILURE_MESSAGE = "threshold exceeded";
 
+const defaultConfiguration = {
+    includeThresholds: false,
+    testCasePassCondition: (passed, failed) => passed > 0 && failed === 0
+}
+
 const ident = function (x) {
     return "  ".repeat(x);
 }
@@ -33,7 +38,8 @@ const sanitizeName = function (s) {
 }
 
 class TestCase {
-    constructor(className, name = null) {
+    constructor(className, configuration, name = null) {
+        this.configuration = configuration;
         this.className = sanitizeName(className);
         this.failMessage = "";
 
@@ -46,7 +52,7 @@ class TestCase {
         this.name = sanitizeName(get(check, ["name"]));
         const passed = get(check, ["passes"]);
         const failed = get(check, ["fails"])
-        this.passed = passed > 0 && failed === 0;
+        this.passed = this.configuration.testCasePassCondition(passed, failed);
 
         if (!this.passed) {
             const passPercent = passed / (passed + failed) * 100;
@@ -64,11 +70,12 @@ class TestCase {
 }
 
 class TestSuite {
-    constructor(id, name) {
+    constructor(id, name, configuration) {
         this.id = id;
         this.name = sanitizeName(name);
         this.cases = [];
         this.failures = 0;
+        this.configuration = configuration;
     }
 
     parseChecks(checks) {
@@ -78,7 +85,7 @@ class TestSuite {
 
         for (let index = 0; index < checks.length; ++index) {
             const check = checks[index];
-            const c = new TestCase(this.name);
+            const c = new TestCase(this.name, this.configuration);
             c.fromCheck(check);
             this.cases.push(c);
 
@@ -101,9 +108,10 @@ class TestSuite {
 }
 
 class Report {
-    constructor(data, includeThresholds) {
+    constructor(data, cfg) {
         this.nextSuiteId = 0;
         this.suites = [];
+        this.configuration = cfg;
 
         const rootGroup = get(data, ["root_group"]);
 
@@ -117,7 +125,7 @@ class Report {
             }
         }
 
-        if (includeThresholds) {
+        if (cfg.includeThresholds) {
             this.parseMetrics(data);
         }
     }
@@ -143,7 +151,11 @@ class Report {
                 }
 
                 const isOk = get(thresholds[thresholdName], ["ok"]);
-                const tc = new TestCase(THRESHOLDS_TEST_SUITE_NAME, `${metricName}: ${thresholdName}`);
+                const tc = new TestCase(
+                    THRESHOLDS_TEST_SUITE_NAME,
+                    this.configuration,
+                    `${metricName}: ${thresholdName}`);
+
                 tc.passed = isOk;
                 thresholdCases.push(tc);
 
@@ -172,7 +184,7 @@ class Report {
             return;
         }
 
-        const suite = new TestSuite(this.nextSuiteId, name);
+        const suite = new TestSuite(this.nextSuiteId, name, this.configuration);
         suite.parseChecks(checks);
 
         this.suites.push(suite)
@@ -197,8 +209,8 @@ class Report {
     }
 }
 
-function jUnit(data, includeThresholds = true) {
-    return new Report(data, includeThresholds).toXml();
+function jUnit(data, cfg = null) {
+    return new Report(data, cfg == null ? defaultConfiguration : cfg).toXml();
 }
 
 exports.jUnit = jUnit;
