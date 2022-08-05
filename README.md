@@ -64,7 +64,7 @@ import {jUnit} from "k6-junit";
     return {
         "./test-results.xml": jUnit(data, {
            includeThresholds: false,
-           testCasePassCondition: passed > 0 && failed <= passed
+           testCasePassCondition: (passed, failed) => passed > 0 && failed <= passed
         })
     };
 ...
