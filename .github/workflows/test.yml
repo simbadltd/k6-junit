@@ -13,7 +13,7 @@ jobs:
         run: yarn
       - name: Run tests
         run: yarn test
-      - name: Generating coverage badges
+      - name: Coverage badges
         uses: jpb06/jest-badges-action@latest
-          with:
-            branches: main
+        with:
+          branches: main
