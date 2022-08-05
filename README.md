@@ -1,5 +1,9 @@
 # k6-junit
 [![NPM](https://img.shields.io/npm/v/k6-junit.svg)](https://www.npmjs.org/package/k6-junit)
+&nbsp;
+[![CI](https://github.com/simbadltd/k6-junit/actions/workflows/default.yml/badge.svg)](https://github.com/simbadltd/k6-junit/actions/workflows/default.yml)
+&nbsp;
+<img src="./badges/coverage-jest coverage.svg">
 
 k6 JUnit summary exporter library.
 
