@@ -2,6 +2,7 @@
 on:
   push:
     branches:
+      - '*'
       - '!release'
 jobs:
   build:
@@ -12,3 +13,7 @@ jobs:
         run: yarn
       - name: Run tests
         run: yarn test
+      - name: Coverage badges
+        uses: jpb06/jest-badges-action@latest
+        with:
+          branches: main
