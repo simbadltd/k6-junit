@@ -16,13 +16,12 @@ jobs:
         uses: jpb06/jest-badges-action@latest
         with:
           branches: main
-      - uses: actions/setup-node@v3
+      - name: Publish
+        if: github.ref == 'refs/heads/main'
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - name: Publish
         run: npm publish
-        with: 
-          branches: main
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
