@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
+      - name: Publish
       - run: npm publish
         with: 
           branches: main
