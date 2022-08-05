@@ -3,7 +3,7 @@ const THRESHOLDS_TEST_SUITE_NAME = "Thresholds";
 const THRESHOLD_FAILURE_MESSAGE = "threshold exceeded";
 
 const defaultConfiguration = {
-    includeThresholds: false,
+    includeThresholds: true,
     testCasePassCondition: (passed, failed) => passed > 0 && failed === 0
 }
 
@@ -113,6 +113,9 @@ class Report {
         this.suites = [];
         this.configuration = cfg;
 
+        if (data == null)
+            return;
+
         const rootGroup = get(data, ["root_group"]);
 
         this.addSuite(rootGroup, ROOT_TEST_SUITE_NAME);
@@ -210,7 +213,14 @@ class Report {
 }
 
 function jUnit(data, cfg = null) {
-    return new Report(data, cfg == null ? defaultConfiguration : cfg).toXml();
+    const configuration = cfg == null ? defaultConfiguration : {
+        includeThresholds:
+            cfg.includeThresholds == null ? defaultConfiguration.includeThresholds : cfg.includeThresholds,
+        testCasePassCondition:
+            cfg.testCasePassCondition == null ? defaultConfiguration.testCasePassCondition : cfg.testCasePassCondition,
+    };
+
+    return new Report(data, configuration).toXml();
 }
 
 exports.jUnit = jUnit;
