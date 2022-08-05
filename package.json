@@ -27,11 +27,6 @@
     "jest": "^28.1.3"
   },
   "scripts": {
-    "test": "jest"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
+    "test": "jest --ci --coverage"
   }
 }
