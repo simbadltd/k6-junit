@@ -12,7 +12,7 @@ export function handleSummary(data) {
     console.log('Preparing the end-of-test summary...');
     return {
         "./test-results.xml": jUnit(data)
-    }
+    };
 }
 ```
 
@@ -46,14 +46,27 @@ module.exports = {
 }
 ```
 
-### Excluding Thresholds export
-Call `jUnit` function with `includeThresholds` argument set to `false`. It will prevent Thresholds statistics to be exported.
+### Configuration
+Since your project may have its own features there is a possibility to adjust behaviour 
+to your needs. There are several configuration parameters available. Please, see their 
+reference below:
+
+| Parameter Name        | Description                                                                    | Default value              |
+|-----------------------|--------------------------------------------------------------------------------|----------------------------|
+| includeThresholds     | Allows you to control the inclusion of Threshold metrics during the export     | true                       |
+| testCasePassCondition | Allows you to control the logic which decides whether testCase passed or not   | passed > 0 && failed === 0 |
+
+If you need to override default values, please call `jUnit` function with `cfg`
+argument defined. So that, your specific configuration will be used by the library.
 ``` javascript
 import {jUnit} from "k6-junit";
 ...
     return {
-        "./test-results.xml": jUnit(data, false)
-    }
+        "./test-results.xml": jUnit(data, {
+           includeThresholds: false,
+           testCasePassCondition: (passed, failed) => passed > 0 && failed <= passed
+        })
+    };
 ...
 ```
 
