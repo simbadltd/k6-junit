@@ -50,6 +50,12 @@ module.exports = {
 }
 ```
 
+### Using without transpiling
+In case when it is necessary to avoid transpiling to js and run k6 right on typescript tests, you should modify import statement:
+```javascript
+import {jUnit} from "./node_modules/k6-junit/index.js";
+```
+
 ### Configuration
 Since your project may have its own features there is a possibility to adjust behaviour 
 to your needs. There are several configuration parameters available. Please, see their 
