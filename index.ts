@@ -68,7 +68,7 @@ class TestCase {
 
         if (!this.passed) {
             const passPercent = (passed / (passed + failed)) * 100;
-            this.failMessage = `${passed} / ${failed} (${passPercent.toFixed(2)}%) checks passed`;
+            this.failMessage = `Passed: ${passed} Failed: ${failed} (${passPercent.toFixed(2)}%)`;
         }
     }
 
