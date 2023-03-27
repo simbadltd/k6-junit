@@ -70,27 +70,50 @@ class TestCase {
 }
 
 class TestSuite {
-    constructor(id, name, configuration) {
+    constructor(id, name, configuration, innerGroups) {
         this.id = id;
         this.name = sanitizeName(name);
         this.cases = [];
         this.failures = 0;
         this.configuration = configuration;
+        this.innerGroups = innerGroups;
     }
 
     parseChecks(checks) {
-        if (emptyArray(checks)) {
+        if (checks != null){
+
+            for (let index = 0; index < checks.length; ++index) {
+                const check = checks[index];
+                const c = new TestCase(this.name, this.configuration);
+                c.fromCheck(check);
+                this.cases.push(c);
+
+                if (!c.passed) {
+                    this.failures++;
+                }
+            }
+        }
+
+        if (emptyArray(this.innerGroups)) {
             return;
         }
 
-        for (let index = 0; index < checks.length; ++index) {
-            const check = checks[index];
-            const c = new TestCase(this.name, this.configuration);
-            c.fromCheck(check);
-            this.cases.push(c);
+        //parse inner group checks and add to this suite
+        for (let index = 0; index < this.innerGroups.length; ++index) {
+            const innerGroup = this.innerGroups[index];
+            const innerGroupChecks = get(innerGroup, ["checks"]);
+            const innerGroupGroups = get(innerGroup, ["groups"]);
 
-            if (!c.passed) {
-                this.failures++;
+            if (!emptyArray(innerGroupChecks) ) {
+                let innerSuiteName = sanitizeName(innerGroup.name);
+                if(this.name)
+                    innerSuiteName = sanitizeName(`${this.name}: ${innerGroup.name}`);
+                
+                //create sub suite and add its (and its suites') checks and failures, but don't render it
+                const innerSuite = new TestSuite(index, innerSuiteName, this.configuration, innerGroupGroups);
+                innerSuite.parseChecks(innerGroupChecks)
+                this.cases = [...this.cases, ...innerSuite.cases];
+                this.failures = innerSuite.failures;
             }
         }
     }
@@ -101,6 +124,7 @@ class TestSuite {
             const c = this.cases[index];
             casesXml.push(c.toXml(tab + 1));
         }
+        
         return `${ident(tab)}<testsuite id="${this.id}" name="${this.name}" tests="${this.cases.length}" failures="${this.failures}">\n` +
             casesXml.join("\n") +
             `\n${ident(tab)}</testsuite>`;
@@ -118,7 +142,11 @@ class Report {
 
         const rootGroup = get(data, ["root_group"]);
 
-        this.addSuite(rootGroup, ROOT_TEST_SUITE_NAME);
+        const rootChecks = get(rootGroup, ["checks"]);
+        if(!emptyArray(rootChecks)){                            //only add root test suite if there are no nested ones
+            this.addSuite(rootGroup, ROOT_TEST_SUITE_NAME);
+        }
+
         const groups = get(rootGroup, ["groups"]);
 
         if (!emptyArray(groups)) {
@@ -181,13 +209,13 @@ class Report {
 
     addSuite(group, defaultName) {
         const checks = get(group, ["checks"]);
+        const innerGroups = get(group, ["groups"]);
         const name = get(group, ["name"]) || defaultName;
 
-        if (emptyArray(checks)) {
+        const suite = new TestSuite(this.nextSuiteId, name, this.configuration, innerGroups);
+        if (emptyArray(checks) && emptyArray(innerGroups)) {
             return;
         }
-
-        const suite = new TestSuite(this.nextSuiteId, name, this.configuration);
         suite.parseChecks(checks);
 
         this.suites.push(suite)
