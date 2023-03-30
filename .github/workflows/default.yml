@@ -15,7 +15,7 @@ jobs:
       - name: Coverage badges
         uses: jpb06/jest-badges-action@latest
         with:
-          branches: main
+          branches: develop
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
