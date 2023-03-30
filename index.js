@@ -4,6 +4,7 @@ const THRESHOLD_FAILURE_MESSAGE = "threshold exceeded";
 
 const defaultConfiguration = {
     includeThresholds: true,
+    maxGroupNestingLevel: 1,
     testCasePassCondition: (passed, failed) => passed > 0 && failed === 0
 }
 
@@ -49,6 +50,10 @@ class TestCase {
     }
 
     fromCheck(check) {
+        if (check.className) {
+            this.className = check.className;
+        }
+
         this.name = sanitizeName(get(check, ["name"]));
         const passed = get(check, ["passes"]);
         const failed = get(check, ["fails"])
@@ -117,20 +122,43 @@ class Report {
             return;
 
         const rootGroup = get(data, ["root_group"]);
-
-        this.addSuite(rootGroup, ROOT_TEST_SUITE_NAME);
-        const groups = get(rootGroup, ["groups"]);
-
+        const groups = this.getGroupsRecursively(rootGroup);
         if (!emptyArray(groups)) {
-            for (let index = 0; index < groups.length; ++index) {
-                const group = groups[index];
-                this.addSuite(group, `Test suite ${this.nextSuiteId + 1}`)
-            }
+            groups.forEach(group => {
+                const isRootGroup = rootGroup === group;
+                const defaultName = isRootGroup? ROOT_TEST_SUITE_NAME : `Test Suite ${this.nextSuiteId}`;
+                this.addSuite(group, defaultName);
+            });
         }
 
         if (cfg.includeThresholds) {
             this.parseMetrics(data);
         }
+    }
+
+    getGroupsRecursively(group, nestingLevel = 0) {
+        if (!group) {
+            return [];
+        }
+
+        let result = [ group ];
+
+        if (nestingLevel === this.configuration.maxGroupNestingLevel) {
+            // [kk]: #10 mark those groups which have greater nesting level than required
+            group.shouldFlatten = true;
+        } else {
+            const nestedGroups = this.getNestedGroups(group);
+            if (!emptyArray(nestedGroups)) {
+                for (let index = 0; index < nestedGroups.length; ++index) {
+                    const nestedGroup = nestedGroups[index];
+                    const localResult = this.getGroupsRecursively(nestedGroup, nestingLevel + 1);
+                    if (!emptyArray(localResult)) {
+                        result.push(...localResult);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     parseMetrics(data) {
@@ -180,18 +208,58 @@ class Report {
     }
 
     addSuite(group, defaultName) {
-        const checks = get(group, ["checks"]);
-        const name = get(group, ["name"]) || defaultName;
+        const name = this.getGroupName(group, defaultName);
+        const suite = new TestSuite(this.nextSuiteId, name, this.configuration);
 
-        if (emptyArray(checks)) {
-            return;
+        // [kk]: #10 flatten those groups which have greater nesting level than required
+        const checks = group.shouldFlatten? this.getChecksRecursively(group, suite.name): this.getChecks(group);
+        if (!emptyArray(checks)) {
+            suite.parseChecks(checks);
+            this.suites.push(suite);
+            this.nextSuiteId++;
         }
 
-        const suite = new TestSuite(this.nextSuiteId, name, this.configuration);
-        suite.parseChecks(checks);
+        return suite;
+    }
 
-        this.suites.push(suite)
-        this.nextSuiteId++;
+    getChecksRecursively(group, className, nestingLevel = 0) {
+        let checks = this.getChecks(group);
+        if (nestingLevel > 0) {
+            // [kk]: #10 for those checks which were flattened use their's group name as a class name
+            checks.forEach(check => {
+                check.className = className;
+            });
+        }
+
+        const groups = this.getNestedGroups(group);
+        if (!emptyArray(groups)) {
+            for (let index = 0; index < groups.length; ++index) {
+                const nestedGroup = groups[index];
+                const nestedGroupName = sanitizeName(this.getGroupName(nestedGroup));
+                const nestedChecks = this.getChecksRecursively(
+                    nestedGroup,
+                    nestedGroupName? `${className}: ${nestedGroupName}`: className,
+                    nestingLevel + 1);
+                if (!emptyArray(nestedChecks)) {
+                    checks.push(...nestedChecks);
+                }
+            }
+        }
+
+        return checks;
+    }
+
+    getChecks(group) {
+        return  get(group, ["checks"]);
+    }
+
+    getNestedGroups(group) {
+        return get(group, ["groups"]);
+    }
+
+    getGroupName(group, defaultName = null) {
+        const result = get(group, ["name"]);
+        return result? result: defaultName;
     }
 
     toXml() {
@@ -218,9 +286,11 @@ function jUnit(data, cfg = null) {
             cfg.includeThresholds == null ? defaultConfiguration.includeThresholds : cfg.includeThresholds,
         testCasePassCondition:
             cfg.testCasePassCondition == null ? defaultConfiguration.testCasePassCondition : cfg.testCasePassCondition,
+        maxGroupNestingLevel:
+            cfg.maxGroupNestingLevel == null? defaultConfiguration.maxGroupNestingLevel: cfg.maxGroupNestingLevel
     };
 
-    return new Report(data, configuration).toXml();
+    return new Report(JSON.parse(JSON.stringify(data)), configuration).toXml();
 }
 
 exports.jUnit = jUnit;
