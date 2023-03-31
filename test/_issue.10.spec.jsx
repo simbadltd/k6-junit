@@ -1,6 +1,6 @@
-﻿import {jUnit} from "../index";
+﻿import { jUnit } from "../index";
 
-const testPayload = {
+const nestedPayload = {
     "root_group": {
         "name": "",
         "path": "",
@@ -193,7 +193,7 @@ const testPayload = {
     }
 }
 
-test("Issue #10: Should flat nested test suites at 2nd level", () => {
+test("Nested payload", () => {
     const expected = `<?xml version="1.0"?>
 <testsuites tests="6" failures="3">
   <testsuite id="0" name="First Test Suite" tests="3" failures="0">
@@ -215,6 +215,6 @@ test("Issue #10: Should flat nested test suites at 2nd level", () => {
     </testcase>
   </testsuite>
 </testsuites>`;
-    const result = jUnit(testPayload);
+    const result = jUnit(nestedPayload, { maxGroupNestingLevel: 1 });
     expect(result).toEqual(expected);
 });
