@@ -1,4 +1,4 @@
-﻿import { jUnit } from "../index";
+﻿const jUnit = require("../index").jUnit;
 
 const nestedPayload = {
     "root_group": {
@@ -191,7 +191,7 @@ const nestedPayload = {
             "type": "rate"
         }
     }
-}
+};
 
 test("Nested payload", () => {
     const expected = `<?xml version="1.0"?>

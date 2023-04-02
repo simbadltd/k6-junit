@@ -1,4 +1,4 @@
-﻿import {jUnit} from "../index";
+﻿const jUnit = require("../index").jUnit;
 
 const testPayload = {
     "root_group": {

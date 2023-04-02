@@ -6,15 +6,15 @@ const defaultConfiguration = {
     includeThresholds: true,
     maxGroupNestingLevel: 1,
     testCasePassCondition: (passed, failed) => passed > 0 && failed === 0
-}
+};
 
 const ident = function (x) {
     return "  ".repeat(x);
-}
+};
 
 const get = function (data, path) {
     let i, len = path.length;
-    for (i = 0; typeof data === 'object' && i < len; ++i) {
+    for (i = 0; typeof data === "object" && i < len; ++i) {
         data = data[path[i]];
     }
     return data;
@@ -22,21 +22,21 @@ const get = function (data, path) {
 
 const emptyArray = function (a) {
     return !Array.isArray(a) || get(a, ["length"]) === 0;
-}
+};
 
 const replacements = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    "'": '&#39;',
-    '"': '&quot;',
-}
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    "\"": "&quot;",
+};
 
 const sanitizeName = function (s) {
     return s.replace(/[&<>'"]/g, function (char) {
-        return replacements[char]
-    })
-}
+        return replacements[char];
+    });
+};
 
 class TestCase {
     constructor(className, configuration, name = null) {
@@ -44,7 +44,7 @@ class TestCase {
         this.className = sanitizeName(className);
         this.failMessage = "";
 
-        if (!!name) {
+        if (name) {
             this.name = sanitizeName(name);
         }
     }
@@ -56,7 +56,7 @@ class TestCase {
 
         this.name = sanitizeName(get(check, ["name"]));
         const passed = get(check, ["passes"]);
-        const failed = get(check, ["fails"])
+        const failed = get(check, ["fails"]);
         this.passed = this.configuration.testCasePassCondition(passed, failed);
 
         if (!this.passed) {
@@ -166,7 +166,7 @@ class Report {
         const thresholdCases = [];
         let failures = 0;
         for (let metricName in metrics) {
-            if (!metrics.hasOwnProperty(metricName)) {
+            if (!Object.prototype.hasOwnProperty.call(metrics, metricName)) {
                 continue;
             }
 
@@ -177,7 +177,7 @@ class Report {
             }
 
             for (let thresholdName in thresholds) {
-                if (!thresholds.hasOwnProperty(thresholdName)) {
+                if (!Object.prototype.hasOwnProperty.call(thresholds, thresholdName)) {
                     continue;
                 }
 

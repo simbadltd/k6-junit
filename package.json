@@ -1,6 +1,6 @@
 {
   "name": "k6-junit",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "k6 JUnit summary exporter library",
   "main": "index.js",
   "types": "index.d.ts",
@@ -21,12 +21,20 @@
   ],
   "author": "Konstantin Kryzhanovskii",
   "license": "MIT",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.d.ts",
+    "index.js"
+  ],
   "devDependencies": {
     "@babel/preset-env": "^7.18.10",
     "babel-jest": "^28.1.3",
+    "eslint": "^8.37.0",
     "jest": "^28.1.3"
   },
   "scripts": {
-    "test": "jest --ci --coverage"
+    "test": "jest --ci --coverage",
+    "lint": "eslint \"**/*.{js,jsx}\""
   }
 }

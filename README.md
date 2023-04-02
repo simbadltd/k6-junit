@@ -164,5 +164,5 @@ import {jUnit} from "k6-junit";
 ```
 
 
-
-## LICENSE [MIT](LICENSE)
+## LICENSE
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
