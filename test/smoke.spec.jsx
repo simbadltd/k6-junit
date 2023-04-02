@@ -301,6 +301,6 @@ test("Failure message check", () => {
   </testsuite>
 </testsuites>`;
 
-    const result = jUnit(demoPayload, {testCasePassCondition: () => false});
+    const result = jUnit(demoPayload, { testCasePassCondition: () => false });
     expect(result).toEqual(expected);
 });

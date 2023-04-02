@@ -126,7 +126,7 @@ class Report {
         if (!emptyArray(groups)) {
             groups.forEach(group => {
                 const isRootGroup = rootGroup === group;
-                const defaultName = isRootGroup? ROOT_TEST_SUITE_NAME : `Test Suite ${this.nextSuiteId}`;
+                const defaultName = isRootGroup ? ROOT_TEST_SUITE_NAME : `Test Suite ${this.nextSuiteId}`;
                 this.addSuite(group, defaultName);
             });
         }
@@ -141,7 +141,7 @@ class Report {
             return [];
         }
 
-        let result = [ group ];
+        let result = [group];
 
         if (nestingLevel === this.configuration.maxGroupNestingLevel) {
             // [kk]: #10 mark those groups which have greater nesting level than required
@@ -212,7 +212,7 @@ class Report {
         const suite = new TestSuite(this.nextSuiteId, name, this.configuration);
 
         // [kk]: #10 flatten those groups which have greater nesting level than required
-        const checks = group.shouldFlatten? this.getChecksRecursively(group, suite.name): this.getChecks(group);
+        const checks = group.shouldFlatten ? this.getChecksRecursively(group, suite.name) : this.getChecks(group);
         if (!emptyArray(checks)) {
             suite.parseChecks(checks);
             this.suites.push(suite);
@@ -238,7 +238,7 @@ class Report {
                 const nestedGroupName = sanitizeName(this.getGroupName(nestedGroup));
                 const nestedChecks = this.getChecksRecursively(
                     nestedGroup,
-                    nestedGroupName? `${className}: ${nestedGroupName}`: className,
+                    nestedGroupName ? `${className}: ${nestedGroupName}` : className,
                     nestingLevel + 1);
                 if (!emptyArray(nestedChecks)) {
                     checks.push(...nestedChecks);
@@ -250,7 +250,7 @@ class Report {
     }
 
     getChecks(group) {
-        return  get(group, ["checks"]);
+        return get(group, ["checks"]);
     }
 
     getNestedGroups(group) {
@@ -259,7 +259,7 @@ class Report {
 
     getGroupName(group, defaultName = null) {
         const result = get(group, ["name"]);
-        return result? result: defaultName;
+        return result ? result : defaultName;
     }
 
     toXml() {
@@ -287,7 +287,7 @@ function jUnit(data, cfg = null) {
         testCasePassCondition:
             cfg.testCasePassCondition == null ? defaultConfiguration.testCasePassCondition : cfg.testCasePassCondition,
         maxGroupNestingLevel:
-            cfg.maxGroupNestingLevel == null? defaultConfiguration.maxGroupNestingLevel: cfg.maxGroupNestingLevel
+            cfg.maxGroupNestingLevel == null ? defaultConfiguration.maxGroupNestingLevel : cfg.maxGroupNestingLevel
     };
 
     return new Report(JSON.parse(JSON.stringify(data)), configuration).toXml();

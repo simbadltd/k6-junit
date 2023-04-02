@@ -249,6 +249,6 @@ test("Should exclude threshold from export when includeThresholds = false", () =
   </testsuite>
 </testsuites>`;
 
-    const result = jUnit(testPayload, {includeThresholds: false});
+    const result = jUnit(testPayload, { includeThresholds: false });
     expect(result).toEqual(expected);
 });
